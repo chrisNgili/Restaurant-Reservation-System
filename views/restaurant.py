@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, Blueprint
-from models import db, Restaurant
+from models import db, Restaurant, Menu, Review, Reservation
 
 restaurant_bp = Blueprint("restaurant_blueprint", __name__)
 
@@ -89,3 +89,27 @@ def get_restaurants_by_id(restaurant_id):
         "description":restaurant.description
     }
     return jsonify(restaurant_info), 200
+
+@restaurant_bp.route("/restaurants/<int:restaurant_id>/menus", methods=["GET"])
+def get_menus(restaurant_id):
+    def get_menus(restaurant_id):
+        menus = Menu.query.filter_by(restaurant_id=restaurant_id).all()
+        return menus
+    menus = get_menus(restaurant_id)
+    return jsonify([{"id":menu.id, "item_name":menu.item_name, "description":menu.description, "price":menu.price} for menu in menus])
+
+@restaurant_bp.route("/restaurants/<int:restaurant_id>/reviews", methods=["GET"])
+def get_reviews(restaurant_id):
+    def get_reviews(restaurant_id):
+        reviews = Review.query.filter_by(restaurant_id=restaurant_id).all()
+        return reviews
+    reviews = get_reviews(restaurant_id)
+    return jsonify([{"id": review.id, "rating":review.rating, "comment": review.comment, "date":review.date} for review in reviews])
+
+@restaurant_bp.route("/restaurants/<int:restaurant_id>/reservations", methods=["GET"])
+def get_reservations(restaurant_id):
+    def get_reservations(restaurant_id):
+        reservations = Reservation.query.filter_by(restaurant_id=restaurant_id)
+        return reservations
+    reservations = get_reservations(restaurant_id)
+    return jsonify([{"id":res.id, "user_id":res.user_id, "party_size": res.party_size, "status":res.status, "date":res.date} for res in reservations])

@@ -16,11 +16,12 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config["MAIL_USE_SSL"] = False
-app.config['MAIL_USERNAME'] = '' 
-app.config['MAIL_PASSWORD'] = 'your_password_here'  
-app.config['MAIL_DEFAULT_SENDER'] = 'captainmarvel0465@gmail.com'
+app.config['MAIL_USERNAME'] = 'captainmarvel0465@gmail.com' 
+app.config['MAIL_PASSWORD'] = 'tqkr zgad erwz wrhf'  
+app.config['MAIL_DEFAULT_SENDER'] = 'Restauflow@gmail.com'
 
 mail = Mail(app)
+mail.init_app(app)
 from views import *
 
 app.register_blueprint(user_bp)
