@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
+from datetime import timedelta
 from models import db, User, Restaurant, Reservation, Review, Menu
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 
@@ -29,6 +31,18 @@ app.register_blueprint(review_bp)
 app.register_blueprint(restaurant_bp)
 app.register_blueprint(reservation_bp)
 app.register_blueprint(menu_bp)
+app.register_blueprint(auth_bp)
+
+
+app.config["JWT_SECRET_KEY"] = "hhjjkjggjjbbhukgjgghgv"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=4)
+jwt = JWTManager(app)
+jwt.init_app(app)
+
+
+
+
+
 
 
 @app.route("/")

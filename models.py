@@ -13,13 +13,12 @@ class User(db.Model):
     id =db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
     email = db.Column(db.String, nullable=False, unique=True)
-    # password = db.Column(db.String, nullable=False, unique=True)
+    password = db.Column(db.String, nullable=False, unique=False)
     phone = db.Column(db.Integer, nullable=False, unique=True)
     is_admin = db.Column(db.Boolean, default=False)
 
     reservations = db.relationship('Reservation', backref='user', lazy=True)
     reviews = db.relationship('Review', backref='user', lazy=True)
-    # reviews = db.relationship('Review', backref='user', lazy=True) for restaurnats
 
 class Restaurant(db.Model):
     __tablename__ = 'restaurants'
