@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: bdb33f71875f
+Revision ID: 3f1fe51c7acd
 Revises: 
-Create Date: 2025-06-17 22:56:06.623957
+Create Date: 2025-06-18 20:08:41.398031
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bdb33f71875f'
+revision = '3f1fe51c7acd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,6 +29,15 @@ def upgrade():
     sa.UniqueConstraint('location'),
     sa.UniqueConstraint('name')
     )
+    op.create_table('token_blocklist',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('jti', sa.String(length=36), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('token_blocklist', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_token_blocklist_jti'), ['jti'], unique=False)
+
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
@@ -39,7 +48,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('name'),
-    sa.UniqueConstraint('password'),
     sa.UniqueConstraint('phone')
     )
     op.create_table('menus',
@@ -82,5 +90,9 @@ def downgrade():
     op.drop_table('reservations')
     op.drop_table('menus')
     op.drop_table('users')
+    with op.batch_alter_table('token_blocklist', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_token_blocklist_jti'))
+
+    op.drop_table('token_blocklist')
     op.drop_table('restaurants')
     # ### end Alembic commands ###

@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from datetime import timedelta
-from models import db, User, Restaurant, Reservation, Review, Menu
+from models import db, TokenBlocklist
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
@@ -40,7 +40,12 @@ jwt = JWTManager(app)
 jwt.init_app(app)
 
 
+@jwt.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
+    jti = jwt_payload["jti"]
+    token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
 
+    return token is not None
 
 
 
