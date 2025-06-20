@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify, Blueprint
+from flask_jwt_extended import jwt_required
+from .admin import admin_required
 from models import db, Restaurant, Menu, Review, Reservation
 
 restaurant_bp = Blueprint("restaurant_blueprint", __name__)
 
 @restaurant_bp.route("/restaurants", methods=["POST"])
+@jwt_required()
+@admin_required
 def create_restaurant():
     data = request.get_json()
 
@@ -43,7 +47,9 @@ def get_all_restaurants():
         restaurant_list.append(restaurant_info)
     return jsonify(restaurant_list), 200
 
-@restaurant_bp.route("/restaurants/<restaurant_id>", methods=["PATCH"])
+@restaurant_bp.route("/restaurants/<int:restaurant_id>", methods=["PATCH"])
+@jwt_required()
+@admin_required
 def update_restaurant(restaurant_id):
     restaurant = Restaurant.query.get(restaurant_id)
 
@@ -62,7 +68,9 @@ def update_restaurant(restaurant_id):
     restaurant.description = description
     db.session.commit()
 
-@restaurant_bp.route("/restaurants/<restaurant_id>", methods=["DELETE"])
+@restaurant_bp.route("/restaurants/<int:restaurant_id>", methods=["DELETE"])
+@jwt_required()
+@admin_required
 def delete_restaurant(restaurant_id):
     restaurant = Restaurant.query.get(restaurant_id)
 
@@ -74,7 +82,7 @@ def delete_restaurant(restaurant_id):
 
     return jsonify({"success": "Restaurant Deleted!"}), 200
 
-@restaurant_bp.route("/restaurants/<restaurant_id>", methods=["GET"])
+@restaurant_bp.route("/restaurants/<int:restaurant_id>", methods=["GET"])
 def get_restaurants_by_id(restaurant_id):
     restaurant = Restaurant.query.get(restaurant_id)
 
@@ -107,6 +115,8 @@ def get_reviews(restaurant_id):
     return jsonify([{"id": review.id, "rating":review.rating, "comment": review.comment, "date":review.date} for review in reviews])
 
 @restaurant_bp.route("/restaurants/<int:restaurant_id>/reservations", methods=["GET"])
+@jwt_required()
+@admin_required
 def get_reservations(restaurant_id):
     def get_reservations(restaurant_id):
         reservations = Reservation.query.filter_by(restaurant_id=restaurant_id)

@@ -19,7 +19,7 @@ def login():
     
     client = User.query.filter_by(email=email).first()
 
-    if email and check_password_hash(client.password, password):
+    if email and client and check_password_hash(client.password, password):
         access_token = create_access_token(identity=client.id)
         return jsonify(access_tokent=access_token)
 

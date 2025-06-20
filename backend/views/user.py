@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint
 from models import db, User, Reservation, Review
 from flask_mail import Message
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.security import generate_password_hash
 
 user_bp = Blueprint("user_blueprint", __name__)
@@ -45,11 +46,16 @@ def create_user():
         return jsonify({"error": "Failed to regsiter/send welcome email"}), 400
 
 @user_bp.route("/users/<int:user_id>", methods=["PATCH"])
+@jwt_required()
 def update_user(user_id):
+    current_user = get_jwt_identity()
     user = User.query.get(user_id)
 
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    if user_id != current_user:
+        return jsonify({"error": "Unauthorized access"}), 403
     
     data = request.get_json()
     
@@ -65,12 +71,17 @@ def update_user(user_id):
     db.session.commit()
     return jsonify({"success": "User updated"}), 200
 
-@user_bp.route("/users/int:<user_id>", methods=["GET"])
+@user_bp.route("/users/<int:user_id>", methods=["GET"])
+@jwt_required()
 def get_user(user_id):
+    current_user = get_jwt_identity()
     user = User.query.get(user_id)
 
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    if user_id != current_user:
+        return jsonify({"error": "Unauthorized access"}), 403
 
     user_info = {
         "id": user.id,
@@ -83,7 +94,13 @@ def get_user(user_id):
     return jsonify(user_info), 200
 
 @user_bp.route("/users", methods=["GET"])
+@jwt_required()
 def get_all_users():
+    current_user = User.query.get(get_jwt_identity())
+
+    if not current_user.is_admin:
+        return jsonify({"error": "Admin access required"}), 403
+
     users = User.query.all()
 
     user_list = []
@@ -99,12 +116,17 @@ def get_all_users():
 
     return jsonify(user_list), 200
 
-@user_bp.route("/users/<user_id>", methods=["DELETE"])
+@user_bp.route("/users/<int:user_id>", methods=["DELETE"])
+@jwt_required()
 def delete_user(user_id):
+    current_user = get_jwt_identity()
     user = User.query.get(user_id)
 
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    if user_id != current_user:
+        return jsonify({"error": "Unauthorized access"}), 403
 
     db.session.delete(user)
     db.session.commit()
@@ -113,19 +135,25 @@ def delete_user(user_id):
 
 
 @user_bp.route("/users/<int:user_id>/reservations", methods=["GET"])
+@jwt_required()
 def user_reservations(user_id):
-    def get_reservations(user_id):
-        reservations = Reservation.query.filter_by(user_id=user_id).all()
-        return reservations
+    current_user = get_jwt_identity()
+
+    if user_id != current_user:
+        return jsonify({"error": "Unauthorized access"}), 403
     
-    reservations = get_reservations(user_id)
+    reservations = Reservation.query.filter_by(user_id=user_id).all()
+    
     return jsonify([{"id": res.id, "party_size": res.party_size, "status": res.status, "restaurant_id": res.restaurant_id} for res in reservations])
 
 @user_bp.route("/users/<int:user_id>/reviews", methods=["GET"])
+@jwt_required()
 def user_reviews(user_id):
-    def get_reviews(user_id):
-        reviews = Review.query.filter_by(user_id=user_id).all()
-        return reviews
     
-    reviews = get_reviews(user_id)
+    current_user = get_jwt_identity()
+
+    if user_id != current_user:
+        return jsonify({"error": "Unauthorized access"}), 403
+    reviews = Review.query.filter_by(user_id=user_id).all()
+    
     return jsonify([{"id": rev.id, "rating":rev.rating, "comment": rev.comment, "date":rev.date} for rev in reviews])
