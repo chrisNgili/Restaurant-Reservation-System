@@ -66,7 +66,7 @@ def update_reservation(reservation_id):
         return jsonify({"error": "Reservation not found"}), 404
 
     if reservation.user_id != current_user:
-        return jsonify({"error": "Unauthorised access, log in first!"})
+        return jsonify({"error": "Unauthorised access, log in first!"}), 403
 
     data = request.get_json()
 
