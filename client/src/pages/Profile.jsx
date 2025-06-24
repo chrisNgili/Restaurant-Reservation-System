@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { UserContext } from "../context/UserContext"; // Ensure this import is correct
+import { UserContext } from "../context/UserContext";
 
 export default function Profile() {
-  const { user, update_user } = useContext(UserContext);
-  
+  const { user, update_user, delete_profile } = useContext(UserContext);
+  console.log("Current user in Profile:", user);
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [number, setNumber] = useState();
@@ -12,147 +12,93 @@ export default function Profile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-    useEffect(() => {
-      if (user) {
-        setName(user.name);
-        setEmail(user.email);
-        setNumber(user.phone);
-      }
-    }, [user]);
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+      setNumber(user.phone);
+    }
+  }, [user]);
 
   if (!user) {
-    return <div className="text-center text-red-500">You need to be logged in to view this page.</div>;
+    return (
+      <div className="text-center text-red-600 font-semibold mt-10">
+        You need to be logged in to view this page.
+      </div>
+    );
   }
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    if (newPassword  !== confirmPassword) {
+    if (newPassword !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    console.log("Update data:", { name, email, number, password, newPassword })
     update_user(name, email, number, password, newPassword);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center py-8">
-      <div className="border bg-white rounded-lg shadow-md p-8 w-full sm:w-[50vw]">
-        <div className="flex flex-col items-center mb-8">
+    <div className="min-h-screen bg-[#fef7ec] flex justify-center items-center py-10 font-mono">
+      <div className="bg-white shadow-xl rounded-2xl w-full max-w-2xl p-8 border border-amber-100">
+        <div className="flex flex-col items-center mb-6">
           <img
             src="https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg"
             alt="Profile"
-            className="rounded-full w-32 h-32 mb-4"
+            className="rounded-full w-28 h-28 border-4 border-amber-800 shadow-md mb-3"
           />
-          <h2 className="text-2xl font-semibold text-gray-800">{user && user.name}</h2>
-          <p className="text-sm text-gray-600">{user && user.email}</p>
+          <h2 className="text-2xl font-bold text-amber-900">{user.name}</h2>
+          <p className="text-sm text-gray-500">{user.email}</p>
         </div>
 
-        <div className="flex justify-center gap-3 mb-8">
-          {user && user.is_admin ? (
-            <button className="bg-blue-500 px-8 py-3 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+        <div className="flex justify-center mb-6">
+          {user.is_admin ? (
+            <span className="bg-amber-700 text-white px-4 py-1 rounded-full text-sm">
               Admin
-            </button>
+            </span>
           ) : (
-            <button className="bg-green-500 px-8 py-3 text-white rounded-lg hover:bg-green-700 transition duration-300">
+            <span className="bg-amber-500 text-white px-4 py-1 rounded-full text-sm">
               User
-            </button>
+            </span>
           )}
         </div>
 
-        <form onSubmit={handleUpdate} className="space-y-6">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-600">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-600">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="number" className="block text-sm font-medium text-gray-600">
-              Phone Number
-            </label>
-            <input
-              id="number"
-              type="text"
-              value={number}
-              onChange={(e) => setNumber(e.target.value)}
-              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-600">
-              Current Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-600">
-              New Password
-            </label>
-            <input
-              id="newPassword"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600">
-              Confirm New Password
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+        <form onSubmit={handleUpdate} className="space-y-5">
+          {[
+            { id: "name", label: "Name", value: name, setter: setName, type: "text" },
+            { id: "email", label: "Email", value: email, setter: setEmail, type: "email" },
+            { id: "number", label: "Phone Number", value: number, setter: setNumber, type: "text" },
+            { id: "password", label: "Current Password", value: password, setter: setPassword, type: "password" },
+            { id: "newPassword", label: "New Password", value: newPassword, setter: setNewPassword, type: "password" },
+            { id: "confirmPassword", label: "Confirm New Password", value: confirmPassword, setter: setConfirmPassword, type: "password" }
+          ].map(({ id, label, value, setter, type }) => (
+            <div key={id}>
+              <label htmlFor={id} className="block text-sm font-semibold text-amber-900 mb-1">
+                {label}
+              </label>
+              <input
+                id={id}
+                type={type}
+                value={value}
+                onChange={(e) => setter(e.target.value)}
+                className="w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-amber-800 focus:outline-none bg-white shadow-sm"
+              />
+            </div>
+          ))}
 
           <button
             type="submit"
-            className="w-full bg-sky-500 text-white py-3 rounded-lg hover:bg-sky-700 transition duration-300"
+            className="w-full bg-amber-800 text-white py-2.5 rounded-lg hover:bg-amber-900 transition duration-200 font-semibold"
           >
             Update Profile
           </button>
         </form>
 
-        <h3 className="text-lg font-semibold text-gray-800 mt-8 mb-4">DANGER ZONE! Delete Profile</h3>
+        <h3 className="text-lg font-bold text-amber-900 mt-10 mb-2">Danger Zone</h3>
         <button
-          onClick={() => console.log("Delete profile functionality to be implemented")}
-          type="button"
-          className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-700 transition duration-300"
+          onClick={delete_profile}
+          className="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg font-semibold"
         >
-          DELETE YOUR ACCOUNT
+          Delete Account
         </button>
       </div>
     </div>

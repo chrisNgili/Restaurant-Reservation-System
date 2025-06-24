@@ -13,7 +13,7 @@ function Footer() {
           <h3 className="font-semibold mb-2">Quick Links</h3>
           <ul className="space-y-1 text-gray-300">
             <li><a href="/" className="hover:underline">Home</a></li>
-            <li><a href="#" className="hover:underline">Reserve</a></li>
+            <li><a href="/reservations" className="hover:underline">Reserve</a></li>
             <li><a href="#" className="hover:underline">Menus</a></li>
             <li><a href="/login" className="hover:underline">Login</a></li>
           </ul>

@@ -11,6 +11,7 @@ export const UserProvider = ({ children }) => {
 
     const navigate = useNavigate()
     const [user, setUser] = useState(null)
+    console.log(user)
     const [auth_token, setAuthToken] = useState(() => localStorage.getItem("access_token"));
 
     console.log("Current user:", user);
@@ -69,14 +70,44 @@ export const UserProvider = ({ children }) => {
                 toast.dismiss()
                 toast.error("Something went wrong")
             }
+
         })
     }
 
-    function logout_user(){
-        console.log("Loggin out user...");
+    function logout_user() {
+    if (!auth_token) {
+        toast.error("Please Login first");
+        return;
     }
 
-    function update_user(name, email, phone, password){
+    fetch(`${api_url}/logout`, {
+        method: "DELETE",
+        headers: {
+        Authorization: `Bearer ${auth_token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+        throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(res => {
+        if (res.success) {
+        toast.success(res.success);
+        localStorage.removeItem("access_token");
+        setAuthToken(null);
+        setUser(null);
+        navigate("/login");
+        }
+    })
+    .catch(error => {
+        console.error("Error during logout:", error);
+        toast.error("An error occurred during logout");
+    });
+    }
+
+    function update_user(name, email, phone, password, newPassword){
         toast.loading("Updating profile...");
         fetch(`${api_url}/update_user`,{
             method: "PATCH",
@@ -84,7 +115,7 @@ export const UserProvider = ({ children }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${auth_token}`
             },
-            body: JSON.stringify({name:name, email:email, phone:phone, password:password})
+            body: JSON.stringify({name:name, email:email, phone:phone, password:password, newPassword:newPassword})
         })
         .then(response => response.json())
         .then(res => {
@@ -99,6 +130,36 @@ export const UserProvider = ({ children }) => {
             else{
                 toast.dismiss()
                 toast.error("Something went wrong")
+            }
+        })
+    }
+
+    function delete_profile(){
+        toast.loading("Deleting profile...");
+        fetch(`${api_url}/delete_user`, {
+            method: "DELETE",
+            headers:{
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${auth_token}`
+            }
+        })
+        .then(res =>res.json())
+        .then(res => {
+            if(res.error){
+                toast.dismiss();
+                toast.error(res.error);
+            }
+            else if(res.success){
+                toast.dismiss();
+                toast.success(res.success);
+                localStorage.removeItem("access_token");
+                setAuthToken(null);
+                setUser(null)
+                navigate("/login");
+            }
+            else{
+                toast.dismiss();
+                toast.error("Could not delete profile, Error.");
             }
         })
     }
@@ -133,7 +194,8 @@ export const UserProvider = ({ children }) => {
         register_user,
         login_user,
         logout_user,
-        update_user
+        update_user,
+        delete_profile
     }
     return (
         <UserContext.Provider value={context_info}>

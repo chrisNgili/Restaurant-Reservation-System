@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 from models import db, Reservation
+from .admin import admin_required
 
 reservation_bp = Blueprint("reservation_blueprint", __name__)
 
@@ -36,6 +37,8 @@ def make_reservation():
     return jsonify({"message": "Reservation created successfully!"}), 201
 
 @reservation_bp.route("/reservations/<int:reservation_id>", methods=["GET"])
+@jwt_required()
+@admin_required
 def get_reservation_details(reservation_id):
     current_user = get_jwt_identity()
     reservation = Reservation.query.get(reservation_id)

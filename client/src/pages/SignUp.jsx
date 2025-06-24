@@ -17,8 +17,8 @@ export default function SignUp() {
         toast.error("Passwords do not match");
         setPassword('');
         setRepeatPassword('');
-    } else if (password.length < 8) {
-        toast.error("Password must be at least 8 characters");
+    } else if (password.length < 4) {
+        toast.error("Password must be at least 4 characters");
     } else {
       register_user(name, email, number, password);
       setName('');setEmail('');setNumber('');setPassword('');setRepeatPassword('');
@@ -65,7 +65,7 @@ export default function SignUp() {
           <input
             required
             type="password"
-            placeholder="Repeat Password"
+            placeholder="Confirm Password"
             value={repeatPassword}
             onChange={(e) => setRepeatPassword(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#f15a29]"

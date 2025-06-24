@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, Blueprint
 from models import db, User, Reservation, Review
 from flask_mail import Message
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 user_bp = Blueprint("user_blueprint", __name__)
 
@@ -45,25 +45,31 @@ def create_user():
         db.session.rollback()
         return jsonify({"error": "Failed to regsiter/send welcome email"}), 400
 
-@user_bp.route("/update_user>", methods=["PATCH"])
+@user_bp.route("/update_user", methods=["PATCH"])
 @jwt_required()
 def update_user():
-    current_user = get_jwt_identity()
-    user = User.query.get(current_user)
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
 
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
-    if current_user != current_user:
-        return jsonify({"error": "Unauthorized access"}), 403
+
     
     data = request.get_json()
     
     name = data.get("name", user.name)
     email = data.get("email", user.email)
+    newPassword = data.get("newPassword")
+    password = data.get("password")
     phone = data.get("phone", user.phone)
     is_admin = data.get("is_admin", user.is_admin)
 
+    if newPassword and password:
+        if check_password_hash(user.password, password):
+            user.password = generate_password_hash(newPassword)
+        else:
+            return jsonify({"error": "Current password is incorrect"}), 400
+        
     user.name = name
     user.email = email
     user.phone = phone
@@ -116,17 +122,16 @@ def get_all_users():
 
     return jsonify(user_list), 200
 
-@user_bp.route("/users/<int:user_id>", methods=["DELETE"])
+@user_bp.route("/delete_user", methods=["DELETE"])
 @jwt_required()
-def delete_user(user_id):
+def delete_user():
     current_user = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.get(current_user)
 
     if not user:
         return jsonify({"error": "User not found"}), 404
     
-    if user_id != current_user:
-        return jsonify({"error": "Unauthorized access"}), 403
+
 
     db.session.delete(user)
     db.session.commit()
