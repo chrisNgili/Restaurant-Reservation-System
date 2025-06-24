@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { UserContext } from "../context/UserContext";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
   const [name, setName] = useState('');
@@ -13,9 +14,11 @@ export default function SignUp() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password !== repeatPassword) {
-      return alert("Passwords do not match");
+        toast.error("Passwords do not match");
+        setPassword('');
+        setRepeatPassword('');
     } else if (password.length < 8) {
-      return alert("Password must be at least 8 characters");
+        toast.error("Password must be at least 8 characters");
     } else {
       register_user(name, email, number, password);
       setName('');setEmail('');setNumber('');setPassword('');setRepeatPassword('');

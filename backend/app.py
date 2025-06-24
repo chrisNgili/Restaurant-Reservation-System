@@ -37,7 +37,7 @@ app.register_blueprint(auth_bp)
 
 
 app.config["JWT_SECRET_KEY"] = "hhjjkjggjjbbhukgjgghgv"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=4)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=600)
 jwt = JWTManager(app)
 jwt.init_app(app)
 

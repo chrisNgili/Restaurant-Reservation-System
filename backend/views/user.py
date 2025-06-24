@@ -45,16 +45,16 @@ def create_user():
         db.session.rollback()
         return jsonify({"error": "Failed to regsiter/send welcome email"}), 400
 
-@user_bp.route("/users/<int:user_id>", methods=["PATCH"])
+@user_bp.route("/update_user>", methods=["PATCH"])
 @jwt_required()
-def update_user(user_id):
+def update_user():
     current_user = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = User.query.get(current_user)
 
     if not user:
         return jsonify({"error": "User not found"}), 404
     
-    if user_id != current_user:
+    if current_user != current_user:
         return jsonify({"error": "Unauthorized access"}), 403
     
     data = request.get_json()

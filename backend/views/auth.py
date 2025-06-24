@@ -21,7 +21,7 @@ def login():
 
     if email and client and check_password_hash(client.password, password):
         access_token = create_access_token(identity=client.id)
-        return jsonify(access_tokent=access_token)
+        return jsonify(access_token=access_token)
 
 
     else:    
