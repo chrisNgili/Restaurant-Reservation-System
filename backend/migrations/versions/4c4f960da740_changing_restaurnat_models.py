@@ -1,8 +1,8 @@
-"""initial migration
+"""changing restaurnat models
 
-Revision ID: 3f1fe51c7acd
+Revision ID: 4c4f960da740
 Revises: 
-Create Date: 2025-06-18 20:08:41.398031
+Create Date: 2025-06-25 18:49:05.994912
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3f1fe51c7acd'
+revision = '4c4f960da740'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,11 +22,10 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('location', sa.String(), nullable=False),
-    sa.Column('contacts', sa.Integer(), nullable=False),
+    sa.Column('contacts', sa.String(), nullable=False),
     sa.Column('description', sa.Text(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('contacts'),
-    sa.UniqueConstraint('location'),
     sa.UniqueConstraint('name')
     )
     op.create_table('token_blocklist',
