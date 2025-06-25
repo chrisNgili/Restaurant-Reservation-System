@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { UserContext } from "../context/UserContext";
 
 function Navbar() {
   const { user, logout_user } = useContext(UserContext);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-screen-xl mx-auto flex flex-wrap justify-between items-center p-4 space-y-2 md:space-y-0">
         <h1 className="text-2xl font-bold text-amber-800 font-mono">ChronoBites</h1>
-
         <nav className="hidden md:flex space-x-8">
           <a href="/" className="text-gray-700 hover:text-amber-800 font-medium">Home</a>
           {user && (
@@ -28,8 +28,6 @@ function Navbar() {
             </>
           )}
         </nav>
-
-
         <div className="hidden md:flex items-center space-x-4">
           {!user ? (
             <>
@@ -60,13 +58,59 @@ function Navbar() {
             </>
           )}
         </div>
-
-        <button className="md:hidden text-amber-800 ml-auto">
+        <button
+          className="md:hidden text-amber-800 ml-auto"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
               d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+        {isMobileMenuOpen && (
+          <div className="w-full flex flex-col space-y-2 mt-4 md:hidden">
+            <a href="/" className="text-gray-700 hover:text-amber-800 font-medium">Home</a>
+            {user && (
+              <>
+                <a href="/restaurants" className="text-gray-700 hover:text-amber-800 font-medium">Restaurants</a>
+                <a href="/reservations" className="text-gray-700 hover:text-amber-800 font-medium">Reserve a Table</a>
+
+                {user.is_admin && (
+                  <>
+                    <a href="/admin" className="text-red-600 hover:text-red-800 font-medium">Admin Dashboard</a>
+                    <a href="/admin/users" className="text-red-600 hover:text-red-800 font-medium">Manage Users</a>
+                    <a href="/admin/create-restaurant" className="text-red-600 hover:text-red-800 font-medium">Create Restaurant</a>
+                    <a href="/admin/reservations" className="text-red-600 hover:text-red-800 font-medium">Manage Reservations</a>
+                    <a href="/admin/menus" className="text-red-600 hover:text-red-800 font-medium">Manage Menus</a>
+                  </>
+                )}
+              </>
+            )}
+            {!user ? (
+              <>
+                <button
+                  className="text-amber-800 font-medium border border-amber-800 px-4 py-1 rounded hover:bg-amber-800 hover:text-white"
+                  onClick={() => window.location.href = '/login'}>
+                  Login
+                </button>
+                <button
+                  className="bg-amber-800 text-white font-medium px-4 py-1 rounded hover:bg-amber-900"
+                  onClick={() => window.location.href = '/signup'}>
+                  Sign Up
+                </button>
+              </>
+            ) : (
+              <>
+                <a href="/profile" className="text-amber-800 hover:text-amber-900">Profile</a>
+                <button
+                  className="text-red-600 font-medium border border-red-500 px-4 py-1 rounded hover:bg-red-600 hover:text-white transition"
+                  onClick={logout_user}>
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );
