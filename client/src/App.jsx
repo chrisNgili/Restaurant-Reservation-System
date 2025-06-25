@@ -10,7 +10,7 @@ import Reservations from './pages/Reservations';
 import { UserProvider } from './context/UserContext';
 import { RestaurantProvider } from './context/RestaurantContext';
 
-import {AdminDashboard, ManageUsers, CreateRestaurant, ManageReservations, ManageMenus,} from './pages/admin';
+import {AdminDashboard, ManageUsers, CreateRestaurant, ManageReservations, ManageMenus, ManageRestaurants} from './pages/admin';
 function App() {
   return (
     <BrowserRouter>
@@ -32,6 +32,8 @@ function App() {
               <Route path="/admin/create-restaurant" element={<CreateRestaurant />} />
               <Route path="/admin/reservations" element={<ManageReservations />} />
               <Route path="/admin/menus" element={<ManageMenus />} />
+              <Route path="/admin/manage-restaurants" element={<ManageRestaurants />} />
+
             </Route>
           </Routes>
         </RestaurantProvider>

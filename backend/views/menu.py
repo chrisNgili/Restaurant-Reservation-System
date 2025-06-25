@@ -46,7 +46,7 @@ def add_menu_item(restaurant_id):
 
     return jsonify({"message": "Menu item added successfully!"}), 201
 
-@menu_bp.route("/menu/<int:menu_item_id>", methods=["PATCH"])
+@menu_bp.route("/menu/<int:item_id>", methods=["PATCH"])
 @jwt_required()
 @admin_required
 def update_menu_item(item_id):

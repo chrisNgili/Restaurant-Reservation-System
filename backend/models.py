@@ -36,9 +36,9 @@ class Restaurant(db.Model):
     contacts = db.Column(db.Integer, nullable=False, unique=True)
     description = db.Column(db.Text, nullable=False)
 
-    reservations = db.relationship('Reservation', backref='restaurant', lazy=True)
-    menus = db.relationship('Menu', backref='restaurant', lazy=True)
-    reviews = db.relationship('Review', backref='restaurant', lazy=True)
+    reservations = db.relationship('Reservation', backref='restaurant', lazy=True, cascade="all, delete-orphan")
+    menus = db.relationship('Menu', backref='restaurant', lazy=True, cascade="all, delete-orphan")
+    reviews = db.relationship('Review', backref='restaurant', lazy=True, cascade="all, delete-orphan")
 
 class Reservation(db.Model):
     __tablename__ = 'reservations'

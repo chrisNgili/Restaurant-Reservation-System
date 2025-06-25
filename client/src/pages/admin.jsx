@@ -9,8 +9,10 @@ export function AdminDashboard() {
     { to: "/admin/create-restaurant", title: "Create Restaurant", description: "Add a new restaurant to ChronoBites." },
     { to: "/admin/users", title: "Manage Users", description: "View and manage all registered users." },
     { to: "/admin/reservations", title: "Reservations", description: "See all restaurant reservations." },
-    { to: "/admin/menus", title: "Manage Menus", description: "Add/edit/delete restaurant menus." }
+    { to: "/admin/menus", title: "Manage Menus", description: "Add/edit/delete restaurant menus." },
+    { to: "/admin/manage-restaurants", title: "Manage Restaurants", description: "View and delete restaurants." } // add this
   ];
+
 
   return (
     <div className="min-h-screen bg-[#FAF4EF] p-8">
@@ -263,5 +265,53 @@ export function ManageMenus() {
         ))}
       </ul>
     </div>
+  );}
+export function ManageRestaurants() {
+  const { auth_token } = useContext(UserContext);
+  const [restaurants, setRestaurants] = useState([]);
+
+  const fetchRestaurants = () => {
+    fetch(`${api_url}/restaurants`)
+      .then(res => res.json())
+      .then(setRestaurants)
+      .catch(() => toast.error("Failed to fetch restaurants"));
+  };
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  const handleDelete = (id) => {
+    fetch(`${api_url}/restaurants/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${auth_token}` },
+    })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        toast.success("Restaurant deleted");
+        setRestaurants(prev => prev.filter(r => r.id !== id));
+      })
+      .catch(() => toast.error("Failed to delete restaurant"));
+  };
+
+
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold text-amber-900">Manage Restaurants</h1>
+      <ul className="mt-6 space-y-4">
+        {restaurants.map(restaurant => (
+          <li key={restaurant.id} className="bg-white p-4 rounded shadow border border-gray-100">
+            <p><strong>Name:</strong> {restaurant.name}</p>
+            <p><strong>Location:</strong> {restaurant.location}</p>
+            <p><strong>Contacts:</strong> {restaurant.contacts}</p>
+            <p><strong>Description:</strong> {restaurant.description}</p>
+            <button onClick={() => handleDelete(restaurant.id)} className="mt-2 bg-red-600 text-white px-4 py-2 rounded">
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
+
