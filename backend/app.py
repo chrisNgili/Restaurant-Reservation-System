@@ -9,7 +9,7 @@ from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///reservation.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://chronobites_user:9aNo44MiDPv5uSoTpvhtUq9GCqsxz5ME@dpg-d1e4moidbo4c73e5rl0g-a.oregon-postgres.render.com/chronobites'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 migrate = Migrate(app, db)
