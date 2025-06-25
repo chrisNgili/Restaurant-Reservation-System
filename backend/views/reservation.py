@@ -61,6 +61,7 @@ def get_reservation_details(reservation_id):
 
 @reservation_bp.route("/reservations/<int:reservation_id>", methods=["PATCH"])
 @jwt_required()
+@admin_required
 def update_reservation(reservation_id):
     current_user = get_jwt_identity()
     reservation = Reservation.query.get(reservation_id)
@@ -68,8 +69,6 @@ def update_reservation(reservation_id):
     if not reservation:
         return jsonify({"error": "Reservation not found"}), 404
 
-    if reservation.user_id != current_user:
-        return jsonify({"error": "Unauthorised access, log in first!"}), 403
 
     data = request.get_json()
 
@@ -83,6 +82,10 @@ def update_reservation(reservation_id):
     party_size = data.get("party_size")
     if party_size is not None:
         reservation.party_size = party_size
+    
+    status = data.get("status")
+    if status:
+        reservation.status = status
 
     db.session.commit()
 

@@ -1,52 +1,49 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
+import { api_url } from "../config.json";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const { user } = useContext(UserContext);
+  const [restaurants, setRestaurants] = useState([]);
+
+  useEffect(() => {
+    fetch(`${api_url}/restaurants`)
+      .then((res) => res.ok ? res.json() : Promise.reject(res))
+      .then(setRestaurants)
+      .catch((err) => {
+        console.error("Failed to fetch restaurants:", err);
+        toast.error("Unable to load restaurants");
+      });
+  }, []);
 
   if (user) {
     return (
       <div
-        className="relative h-screen w-full bg-cover bg-center"
+        className="relative min-h-screen w-full bg-cover bg-center"
         style={{ backgroundImage: "url('/images/restaurant2.jpg')" }}
       >
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 bg-black/10 backdrop-blur-[1px]">
-          <h1 className="text-white text-5xl md:text-7xl font-bold font-mono tracking-wide text-center drop-shadow-md">
+        <div className="absolute inset-0 flex flex-col items-center px-4 py-10 bg-black/30 backdrop-blur-sm">
+          <h1 className="text-white text-5xl md:text-7xl font-bold font-mono tracking-wide text-center drop-shadow-md mb-6">
             ChronoBites
           </h1>
-          <p className="text-white text-lg md:text-2xl mt-4 text-center font-light font-mono max-w-2xl">
+          <p className="text-white text-lg md:text-2xl text-center font-light font-mono max-w-2xl mb-10">
             Seamless restaurant reservations, redefined.
           </p>
 
-          <div className="flex flex-wrap gap-4 mt-6">
-            <button className="bg-white/20 text-white font-semibold px-5 py-2 rounded-md border border-white/30 backdrop-blur-md hover:bg-white/30 transition">
-              Daily Menu
-            </button>
-            <button className="bg-white/20 text-white font-semibold px-5 py-2 rounded-md border border-white/30 backdrop-blur-md hover:bg-white/30 transition">
-              Family Meals
-            </button>
-            <button className="bg-white/20 text-white font-semibold px-5 py-2 rounded-md border border-white/30 backdrop-blur-md hover:bg-white/30 transition">
-              Meal Prep
-            </button>
-          </div>
-
-          <div className="flex flex-wrap gap-3 mt-10 justify-center">
-            <input
-              type="date"
-              className="bg-white/20 text-white placeholder-white font-mono px-4 py-2 rounded-md border border-white/30 backdrop-blur-md focus:outline-none"
-            />
-            <input
-              type="time"
-              className="bg-white/20 text-white placeholder-white font-mono px-4 py-2 rounded-md border border-white/30 backdrop-blur-md focus:outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Party Size"
-              className="bg-white/20 text-white placeholder-white font-mono px-4 py-2 rounded-md border border-white/30 backdrop-blur-md focus:outline-none"
-            />
-            <button className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-2 rounded-md transition">
-              Reserve Table
-            </button>
+          <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {restaurants.map((restaurant) => (
+              <div
+                key={restaurant.id}
+                className="bg-white/20 border border-white/30 rounded-xl p-4 backdrop-blur-sm shadow-md hover:shadow-lg transition"
+              >
+                <Link to={`/restaurants/${restaurant.id}`}>
+                  <h2 className="text-xl font-semibold text-white mb-2">{restaurant.name}</h2>
+                  <p className="text-white/90 text-sm">{restaurant.description}</p>
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -56,7 +53,7 @@ export default function Home() {
   return (
     <div
       className="relative h-screen w-full bg-cover bg-center"
-      style={{ backgroundImage: "url('/images/restaurant.jpg')" }} 
+      style={{ backgroundImage: "url('/images/restaurant.jpg')" }}
     >
       <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center px-6 backdrop-blur-sm text-center">
         <h1 className="text-5xl md:text-7xl font-extrabold text-white font-serif drop-shadow-xl mb-6">

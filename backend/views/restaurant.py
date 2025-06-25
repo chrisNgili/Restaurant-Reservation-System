@@ -30,6 +30,7 @@ def create_restaurant():
     new_restaurant = Restaurant(name=name, location=location, contacts=contacts, description=description)
     db.session.add(new_restaurant)
     db.session.commit()
+    return jsonify({"Success": "Restaurant created successfully"}), 200
 
 @restaurant_bp.route("/restaurants", methods=["GET"])
 def get_all_restaurants():

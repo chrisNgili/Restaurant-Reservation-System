@@ -29,13 +29,6 @@ function Navbar() {
           )}
         </nav>
 
-        <div className="hidden md:block w-64">
-          <input
-            type="text"
-            placeholder="Search restaurants..."
-            className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800"
-          />
-        </div>
 
         <div className="hidden md:flex items-center space-x-4">
           {!user ? (

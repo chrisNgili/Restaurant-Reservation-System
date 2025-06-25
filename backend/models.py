@@ -32,10 +32,9 @@ class Restaurant(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
-    location = db.Column(db.String, nullable=False, unique=True)
+    location = db.Column(db.String, nullable=False )
     contacts = db.Column(db.Integer, nullable=False, unique=True)
     description = db.Column(db.Text, nullable=False)
-    # admin_id = db.Column(db.Integer, db.ForeignKey('users.admin.id'), nullable=False)
 
     reservations = db.relationship('Reservation', backref='restaurant', lazy=True)
     menus = db.relationship('Menu', backref='restaurant', lazy=True)
