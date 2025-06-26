@@ -35,6 +35,7 @@ def make_reservation():
     db.session.commit()
 
     return jsonify({"message": "Reservation created successfully!"}), 201
+    
 
 @reservation_bp.route("/reservations/<int:reservation_id>", methods=["GET"])
 @jwt_required()
