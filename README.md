@@ -3,6 +3,7 @@
 The Restaurant Reservation System is a full-stack web application designed to facilitate the process of making and managing restaurant reservations for customers and restaurant administrators. It supports multi-user functionality, allowing both regular users and admins to manage content.
 
 ## [Deployed Link](https://restaurant-reservation-system-ecru.vercel.app/)
+## [Youtube Link](https://youtu.be/TkF5eBgQgNE)
 
 ## Features
 ### User functionalities
@@ -119,3 +120,10 @@ Email : ngilichristopher@gmail.com
 
 ### License 
 Licensed under the MIT License
+
+#### admin account:
+```
+    email: 1@gmail.com
+    password: 1234
+
+```
