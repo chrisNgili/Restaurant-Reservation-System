@@ -17,8 +17,8 @@ class User(db.Model):
     phone = db.Column(db.Integer, nullable=False, unique=True)
     is_admin = db.Column(db.Boolean, default=False)
 
-    reservations = db.relationship('Reservation', backref='user', lazy=True)
-    reviews = db.relationship('Review', backref='user', lazy=True)
+    reservations = db.relationship('Reservation', backref='user', lazy=True, cascade="all, delete-orphan")
+    reviews = db.relationship('Review', backref='user', lazy=True, cascade="all, delete-orphan")
 
 
 class TokenBlocklist(db.Model):
