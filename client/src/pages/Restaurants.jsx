@@ -67,11 +67,17 @@ export default function Restaurant() {
       body: JSON.stringify({ rating, comment })
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then((data) => {
+      .then(() => {
         toast.success("Review submitted successfully!");
         setRating(1);
         setComment("");
-        setReviews(prev => [...prev, data]); 
+        fetch(`${api_url}/restaurants/${id}/reviews`)
+          .then(res => res.ok ? res.json() : Promise.reject(res))
+          .then(setReviews)
+          .catch((err) => {
+            console.error("Error refreshing reviews:", err);
+            toast.error("Failed to refresh reviews");
+          });
       })
       .catch((err) => {
         console.error("Error submitting review:", err);
